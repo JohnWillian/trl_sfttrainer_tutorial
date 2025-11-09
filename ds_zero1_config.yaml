@@ -1,0 +1,21 @@
+compute_environment: LOCAL_MACHINE
+debug: false
+deepspeed_config:
+  deepspeed_multinode_launcher: standard
+  per_device_train_batch_size: 1  # 需要与Training Config保持一致
+  gradient_accumulation_steps: 8  # 需要与Training Config保持一致
+  zero3_init_flag: false
+  zero_stage: 1
+distributed_type: DEEPSPEED
+downcast_bf16: 'no'
+machine_rank: 0
+main_training_function: main
+mixed_precision: 'bf16' # 需要与Training Config保持一致
+num_machines: 1 # 1 machine
+num_processes: 8  # 使用 8 GPUs
+rdzv_backend: static
+same_network: true
+tpu_env: []
+tpu_use_cluster: false
+tpu_use_sudo: false
+use_cpu: false

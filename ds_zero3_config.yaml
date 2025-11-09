@@ -1,0 +1,21 @@
+compute_environment: LOCAL_MACHINE
+deepspeed_config:
+  gradient_clipping: auto
+  offload_optimizer_device: cpu
+  offload_param_device: cpu
+  zero3_init_flag: true
+  zero3_save_16bit_model: true
+  zero_stage: 3
+  per_device_train_batch_size: 1  # 需要与Training Config保持一致
+  per_device_eval_batch_size: 1   # 需要与Training Config保持一致
+  gradient_accumulation_steps: 8  # 需要与Training Config保持一致
+distributed_type: DEEPSPEED
+fsdp_config: {}
+machine_rank: 0
+main_process_ip: null
+main_process_port: null
+main_training_function: main
+mixed_precision: bf16
+num_machines: 1   # 1 machine
+num_processes: 8  # 使用 8 GPUs
+use_cpu: false
