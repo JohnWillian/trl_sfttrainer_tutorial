@@ -68,7 +68,7 @@ val_dataset_name = "./data/eval"     # Note: 这里是一个目录，不是文�
 train_dataset = load_dataset(train_dataset_name, split="train")
 train_dataset = train_dataset.shuffle(seed=42)	# Shuffle 数据
 
-# 读取Eval数据
+# 读取eval数据
 val_dataset = load_dataset(val_dataset_name, split="test")
 val_dataset = val_dataset.shuffle(seed=42)	# Shuffle 数据
 
@@ -363,7 +363,7 @@ def main():
     train_dataset = load_dataset(train_dataset_name, split="train")
     train_dataset = train_dataset.shuffle(seed=42)	# Shuffle 数据
 
-    # 读取Eval数据
+    # 读取eval数据
     val_dataset = load_dataset(val_dataset_name, split="test")
     val_dataset = val_dataset.shuffle(seed=42)	# Shuffle 数据
 
@@ -371,14 +371,14 @@ def main():
     train_dataset = train_dataset.map(
         formatting_prompts_func,
         num_proc=4,
-        remove_columns=['input', 'output']
+        remove_columns=['prompt', 'completion']
     )
 
     # Format eval data
     val_dataset = val_dataset.map(
         formatting_prompts_func,
         num_proc=4,
-        remove_columns=['input', 'output']
+        remove_columns=['prompt', 'completion']
     )
 
     # Training Config

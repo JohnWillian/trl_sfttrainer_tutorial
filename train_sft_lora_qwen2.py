@@ -3,13 +3,13 @@ from peft import LoraConfig
 from datasets import load_dataset
 from trl import SFTTrainer, SFTConfig
 
-base_model = "./models/Qwen/Qwen2.5-0.5B-Instruct"    # 基座模型路径
+base_model = "./models/Qwen/Qwen2.5-0.5B-Instruct"  # 基座模型路径，自行下载所需模型
 train_dataset_name = "./data/train" # Note: 这里是一个目录，不是文件。目录下存放训练数据，例如`train.json`
-val_dataset_name = "./data/eval"    # Note: 这里是一个目录，不是文件。目录下存放训练数据，例如`eval.json`
+val_dataset_name = "./data/eval"    # Note: 这里是一个目录，不是文件。目录下存放验证数据，例如`eval.json`
 new_model = "../output/finetune/qwen25_05b_sft_lora_r8_a16"   # 训练好的模型保存路径
 
-# SFTConfig中，如果需要使用assistant_only_loss，则需要prompt_template中包含{% generation %}标签(参考：https://huggingface.co/docs/trl/en/sft_trainer#train-on-assistant-messages-only)
-# 但是原版Qwen2.5是不包含的，所以我们需要进行如下修改(参考：https://github.com/huggingface/transformers/issues/34172)
+# SFTConfig中，如果需要使用assistant_only_loss，则需要prompt_template中包含{% generation %}标签
+# 但是原版Qwen2.5是不包含的，需手动修改
 modified_template = """
 {%- if tools %}
     {{- '<|im_start|>system\\n' }}
@@ -94,31 +94,30 @@ peft_config = LoraConfig(
 # ]
 # 请根据自己的数据格式自定义修改
 def formatting_prompts_func(example):
-    example['messages'] = example['input'] + example['output']
+    example['messages'] = example['prompt'] + example['completion']
     return example
 
 def main():
     # 读取train数据
     train_dataset = load_dataset(train_dataset_name, split="train")
-    # Shuffle 数据
-    train_dataset = train_dataset.shuffle(seed=42)
+    train_dataset = train_dataset.shuffle(seed=42)  # Shuffle 数据
 
-    # 读取Eval数据
+    # 读取eval数据
     val_dataset = load_dataset(val_dataset_name, split="test")
-    val_dataset = val_dataset.shuffle(seed=42)
+    val_dataset = val_dataset.shuffle(seed=42)  # Shuffle 数据
 
     # Format train data
     train_dataset = train_dataset.map(
         formatting_prompts_func,
         num_proc=4,
-        remove_columns=['input', 'output']
+        remove_columns=['prompt', 'completion']
     )
 
     # Format eval data
     val_dataset = val_dataset.map(
         formatting_prompts_func,
         num_proc=4,
-        remove_columns=['input', 'output']
+        remove_columns=['prompt', 'completion']
     )
 
     # Training Config
@@ -128,7 +127,7 @@ def main():
         per_device_train_batch_size=1,  # 需要与deepspeed配置文件保持一致
         per_device_eval_batch_size=1,   # 需要与Training Config保持一致
         gradient_accumulation_steps=8,  # 需要与deepspeed配置文件保持一致
-        optim="paged_adamw_32bit",   # 优化器，使用paged_adamw训练速度更快
+        optim="paged_adamw_8bit",   # 优化器，使用paged_adamw训练速度更快
         num_train_epochs=3,   # 训练轮数
         gradient_checkpointing=True,    # 梯度检查点，降低显存消耗
         do_eval=True,   # 是否进行评估
