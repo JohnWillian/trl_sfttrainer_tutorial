@@ -25,7 +25,7 @@ trl==0.19.0
 ---
 # 3. 数据准备
 以 **SFTTrainer** 为例，需将数据集处理为如下格式：
-```json
+```python
 [
 	{
 		'messages': [
@@ -42,7 +42,7 @@ trl==0.19.0
 
 
 示例数据可在 [GitHub 仓库](https://github.com/JohnWillian/trl_sfttrainer_tutorial.git) 获取（欢迎 **Star 🌟**），示例数据格式如下：
-```json
+```python
 [
 	{
 		'prompt': [{'role': 'user', 'content': '...'}],
