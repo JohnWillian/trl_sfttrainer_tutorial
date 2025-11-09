@@ -41,7 +41,7 @@ trl==0.19.0
 - 训练集（train）和验证集（eval）格式一致。
 
 
-示例数据可在 [GitHub 仓库](https://github.com/JohnWillian/trl_sfttrainer_tutorial.git) 获取（欢迎 **Star 🌟**），示例数据格式如下：
+示例数据格式如下：
 ```python
 [
 	{
@@ -428,11 +428,9 @@ CUDA_VISIBLE_DEVICES="0,1,2,3,4,5,6,7" accelerate launch --config_file ds_zero1_
 ```
 > `CUDA_VISIBLE_DEVICES` 用于指定 CUDA 应用程序可见的 GPU 设备。如果需要调整该参数，请同时修改 deepspeed 配置文件中的 `num_processes` 参数，使两者保持一致。
 
-更多配置和使用方式请参考 [GitHub 仓库](https://github.com/JohnWillian/trl_sfttrainer_tutorial.git)。
-
 ---
 
-如果觉得这篇文章有用，就给个**赞**👍和**收藏**⭐️吧！也欢迎在评论区分享你的看法！
+如果觉得有帮助，就给个⭐️吧！
 
 ---
 
